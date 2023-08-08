@@ -65,7 +65,7 @@ Comments are critical to writing good code examples. They clarify the intent of 
 
 ```
 
-On the other hand, restating the code in prose is NOT a good use of comments:
+On the other hand, restating the code in prose is not a good use of comments:
 
 
 ```
@@ -182,5 +182,181 @@ Don't use `/* ... */`:
 ```
 
 
-## Use comments to mark ellipsis
-Skipping reduntant code using ellipses `(..)` is necessary to keep examples short. Still, writers should do it thoughtfully as developers frequently as developers frequently copy & paste examples into their code, and all of our code samples should be valid JavaScript.
+## Comment out parameters
+When writing code, you usually omit parameters you don't need. But in some code examples, you want to demonstrate that you didn't use some possible parameters.
+
+To do so, use `/* ... */` in the parameter list. This is an exception to the rule to only use sigle-line comment (`//`).
+
+
+```
+array.forEach((value /*, index, array /*) => {
+  // ...
+});
+```
+
+## Functions
+### Function names
+For function names, use camelCase, starting with a lowercase character. Use concise, human-readable, and semantic names where appropriate.
+
+The following is a correct example of a function name:
+
+```
+function sayHello() {
+  console.log("Hello");
+}
+```
+Don't use functions names like these:
+
+
+```
+function SayHello() {
+  console.log("Hello!");
+}
+
+function doIt() {
+  console.log("Hello!");
+}
+
+```
+
+### Function declarations
+* Where possible, use the function declaration over function expression to define functions. Here is the recommended way to declare a function:
+
+```
+function sum(a, b) {
+  return a + b;
+}
+
+```
+
+This is not a good way to define a function:
+
+```
+let sum = function (a, b) {
+  return a + b;
+};
+```
+
+* When using anonymous functions as a callback (a function passed to another method invocation), if you do not need to access `this`, use an arrow function to make the code shorter and cleaner. Here is the recommnended way:
+
+```
+const array1 = [1, 2, 3, 4];
+const sum = array1.reduce((a, b) => a + b);
+```
+
+Instead of this:
+```
+const array1 = [1, 2, 3, 4];
+const sum = array1.reduce(function(a, b) {
+  return a + b;
+});
+```
+
+* Consider avoiding using arrow functions to assign a function to an identifier. In particular, don't use arrow functions for methods. Use function declarations with the keyword `function`:
+
+```
+function x() {
+  // ...
+}
+```
+
+Don't do:
+
+```
+const x = () => {
+  // ...
+}
+```
+
+* When using arrow functions, use implicit return (also known as concise body) when possible:
+
+```
+arr.map((e) => e.id);
+```
+
+And not:
+
+```
+arr.map((e) =>  {
+  return e.id;
+});
+```
+
+## Loops and Conditional statements
+### Loop initialization
+When loops are required, choose the appropriate one from `for(;;)` , `for...of`, `while`, etc.
+
+* When iterating through all collections elements, avoid using the classical `for (;;)` loop; prefer `for..of` or `forEach()`. Note that if you are using a collection that is not an `Array`, you have to check that `for...of` is actually supported (it requires the variable to be iterable), or that the `forEach()` method is actually present. Use `for...of`:
+
+
+```
+const roles = ["Software Developer", "Database Analyst"];
+for (const role of roles) {
+  console.log(role);
+}
+```
+
+Or `forEach()`:
+
+```
+const roles = ["Software Developer", "Database Analyst"];
+roles.forEach((role) => {
+  console.log(role);
+})
+```
+
+Do not use `for (;;)` - not only do you habe to add an extra index, `i`, but you also have to track the length of the array. This can be error-prone for beginners.
+
+```
+const roles = ["Software Developer", "Database Analyst"];
+for (let i = 0; i < roles.length; i++) {
+  console.log(roles[i]);
+};
+```
+
+* Make sure that you define the initializer properly by using the `const` keyword for `for...of` or `let` for the other loops. Don't omit it. These are correct examples:
+
+```
+const cats = ["Athema", "Luna"];
+for (const cat of cats) {
+  console.log(cat);
+}
+
+for (let i = 0; i < 4; i++) {
+  result += arr[i];
+}
+
+```
+
+The example below does not follow the recommended guidelines for the initialization (it implicitly creates a global variable and will fail in strict mode):
+
+```
+const cats = ["Athema", "Luna"];
+for (i of cats) {
+  console.log(i);
+}
+
+```
+
+* When you need to access both the value and the index, you can use `.forEach()` instead of `for (;;)`. Write:
+
+```
+const cats = ["Athema", "Luna"];
+cats.forEach((cat, i) => {
+  console.log(`Cat #${i}: ${cat[i]}`);
+});
+```
+
+Do not write:
+
+```
+const cats = ["Athema", "Luna"];
+for (let i = 0; cats.length; i++) {
+  console.log(`Cat #${i}: ${cat[i]}`);
+}
+```
+> [!WARNING]  
+> Never use `for...in` with arrays and strings.
+
+> [!NOTE]  
+> Consider not using a `for` loop at all. If you are using an `Array`. (or a `string` for some operations), consider using more semantic iteration methods instead, like `map()`, `every()`, `findIndex()`, `find()`, `includes()`, and many more.
